@@ -2,7 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Reflection;
 using TravelBookingSystem.Api.Middleware;
+using TravelBookingSystem.Application.Features.Flights.Commands.Create;
+using TravelBookingSystem.Domain.Interfaces;
 using TravelBookingSystem.Infrastructure;
+using TravelBookingSystem.Infrastructure.Repositories;
+using TravelBookingSystem.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +28,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddMemoryCache();
+
+// Inject Services
+builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<IEventStore, EventStore>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IFlightRepository, FlightRepository>();
+builder.Services.AddScoped<IPassengerRepository, PassengerRepository>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+    typeof(CreateFlightCommandHandler).Assembly));
 
 builder.Services.AddSwaggerGen(c =>
 {
