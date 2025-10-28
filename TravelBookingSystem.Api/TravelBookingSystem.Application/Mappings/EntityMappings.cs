@@ -3,7 +3,7 @@ using TravelBookingSystem.Domain.Entities;
 
 namespace TravelBookingSystem.Application.Mappings;
 
-public static class EntityMappings
+public static class FlightMappings
 {
     public static FlightDto ToDto(this Flight flight)
     {
@@ -19,5 +19,10 @@ public static class EntityMappings
             Price = flight.Price,
             CreateDate = flight.CreateDate
         };
+    }
+
+    public static IEnumerable<FlightDto> ToDto(this IEnumerable<Flight> flights)
+    {
+        return flights.Select(f => f.ToDto());
     }
 }

@@ -1,6 +1,6 @@
-using Flight.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using TravelBookingSystem.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

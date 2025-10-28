@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using TravelBookingSystem.Application.Features.Flights.Commands.Create;
 using TravelBookingSystem.Application.DTOs;
+using TravelBookingSystem.Application.Features.Flights.Commands.Update;
+using TravelBookingSystem.Application.Features.Flights.Queries.GetFlights;
 
 namespace TravelBookingSystem.Api.Controllers;
 
@@ -9,13 +11,13 @@ namespace TravelBookingSystem.Api.Controllers;
 [ApiController]
 public class FlightsController : ControllerBase
 {
-    private readonly ISender _mediatr;
+    private readonly ISender _mediator;
 
     /// <summary>
     /// FlightsController
     /// </summary>
-    /// <param name="mediatr"></param>
-    public FlightsController(ISender mediatr) => _mediatr = mediatr;
+    /// <param name="mediator"></param>
+    public FlightsController(ISender mediator) => _mediator = mediator;
 
     /// <summary>
     /// Create Flight
@@ -26,9 +28,51 @@ public class FlightsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(FlightDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateFlightCommand command, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<FlightDto>> Create([FromBody] CreateFlightCommand command, CancellationToken cancellationToken = default)
     {
-        var result = await _mediatr.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
+        return CreatedAtAction(nameof(GetFlights), new { id = result.Id }, result);
+    }
+
+    /// <summary>
+    /// Get flights with optional filters
+    /// </summary>
+    /// <param name="origin">Filter by origin city</param>
+    /// <param name="destination">Filter by destination city</param>
+    /// <param name="date">Filter by departure date</param>
+    /// <returns>List of flights</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<FlightDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<FlightDto>>> GetFlights(
+        [FromQuery] string? origin = null,
+        [FromQuery] string? destination = null,
+        [FromQuery] DateTime? date = null)
+    {
+        var query = new GetFlightsQuery
+        {
+            Origin = origin,
+            Destination = destination,
+            Date = date
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Update available seats for a flight
+    /// </summary>
+    /// <param name="id">Flight ID</param>
+    /// <param name="command">Seat update details</param>
+    /// <returns>Updated flight information</returns>
+    [HttpPut("{id}/seats")]
+    [ProducesResponseType(typeof(FlightDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<FlightDto>> UpdateFlightSeats(int id, [FromBody] UpdateFlightSeatsCommand command)
+    {
+        command.FlightId = id;
+        var result = await _mediator.Send(command);
         return Ok(result);
     }
 }

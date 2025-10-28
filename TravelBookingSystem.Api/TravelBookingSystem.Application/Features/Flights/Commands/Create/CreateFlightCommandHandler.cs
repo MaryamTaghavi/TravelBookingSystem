@@ -65,7 +65,7 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
 
         // TODO : add caching
 
-        _logger.LogInformation("Invalidated flight cache after creating flight {FlightId}", createdFlight.Id);
+        _logger.LogInformation("Add new flight cache after creating flight {FlightId}", createdFlight.Id);
 
         return createdFlight.ToDto();
     }

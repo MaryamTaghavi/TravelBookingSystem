@@ -21,3 +21,17 @@ public class FlightCreatedEvent : DomainEvent
         Destination = destination;
     }
 }
+
+public class FlightSeatsUpdatedEvent : DomainEvent
+{
+    public int FlightId { get; }
+    public int PreviousSeatCount { get; }
+    public int NewSeatCount { get; }
+
+    public FlightSeatsUpdatedEvent(int flightId, int previousSeatCount, int newSeatCount)
+    {
+        FlightId = flightId;
+        PreviousSeatCount = previousSeatCount;
+        NewSeatCount = newSeatCount;
+    }
+}
