@@ -40,4 +40,23 @@ public static class BookingMappings
             BookingDate = booking.BookingDate,
         };
     }
+
+    public static BookingDto ToDto(this Booking booking)
+    {
+        return new BookingDto
+        {
+            Id = booking.Id,
+            FlightId = booking.FlightId,
+            PassengerId = booking.PassengerId,
+            BookingDate = booking.BookingDate,
+            SeatNumber = booking.SeatNumber,
+            Flight = booking.Flight?.ToDto(),
+            // TODO : Add List Passengers
+        };
+    }
+
+    public static IEnumerable<BookingDto> ToDto(this IEnumerable<Booking> bookings)
+    {
+        return bookings.Select(b => b.ToDto());
+    }
 }

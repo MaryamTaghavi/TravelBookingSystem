@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TravelBookingSystem.Application.DTOs;
 using TravelBookingSystem.Application.Features.Bookings.Create;
+using TravelBookingSystem.Application.Features.Flights.Queries.GetByFlightId;
 
 namespace TravelBookingSystem.Api.Controllers;
 
@@ -40,9 +41,8 @@ public class BookingsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<BookingDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsByFlightId(int flightId)
     {
-        // TODO : must complete 
-        return null;
-        //var result = await _mediator.Send(query);
-        //return Ok(result);
+        var query = new GetByFlightIdQuery { FlightId = flightId };
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 }

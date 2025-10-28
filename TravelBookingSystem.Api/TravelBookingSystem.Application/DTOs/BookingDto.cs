@@ -8,8 +8,6 @@ public class BookingDto
     public int PassengerId { get; set; }
     public DateTime BookingDate { get; set; }
     public string SeatNumber { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
     public FlightDto? Flight { get; set; }
 }
 

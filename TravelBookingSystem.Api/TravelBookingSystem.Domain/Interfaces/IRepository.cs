@@ -10,17 +10,18 @@ public interface IRepository<T> where T : class
     Task UpdateAsync(T entity);
     Task DeleteAsync(int id);
     Task<bool> ExistsAsync(int id);
-    Task<IDbContextTransaction> BeginTransactionAsync();
 }
 
 public interface IFlightRepository : IRepository<Entities.Flight>
 {
     Task<IEnumerable<Entities.Flight>> GetFlightsByFiltersAsync(string? origin, string? destination, DateTime? date);
     Task<Entities.Flight?> GetByFlightNumberAsync(string flightNumber);
+    Task<IDbContextTransaction> BeginTransactionAsync();
 }
 
 public interface IBookingRepository : IRepository<Entities.Booking>
 {
+    Task<IEnumerable<Entities.Booking>> GetBookingsByFlightIdAsync(int flightId);
     Task<bool> IsSeatAvailableAsync(int flightId, string seatNumber);
 }
 
