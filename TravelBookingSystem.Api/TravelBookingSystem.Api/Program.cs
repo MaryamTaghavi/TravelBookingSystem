@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Reflection;
+using TravelBookingSystem.Api.Middleware;
 using TravelBookingSystem.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
