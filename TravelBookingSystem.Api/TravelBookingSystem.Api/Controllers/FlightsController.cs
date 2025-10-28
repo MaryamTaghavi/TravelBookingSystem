@@ -20,7 +20,7 @@ public class FlightsController : ControllerBase
     public FlightsController(ISender mediator) => _mediator = mediator;
 
     /// <summary>
-    /// Create Flight
+    /// Create flight
     /// </summary>
     /// <param name="command"></param>
     /// <param name="cancellationToken"></param>

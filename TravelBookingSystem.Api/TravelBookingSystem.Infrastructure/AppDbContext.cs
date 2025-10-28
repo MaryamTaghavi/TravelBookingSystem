@@ -21,6 +21,4 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(FlightConfiguration).Assembly);
     }
-
-    // TODO : Seed Data for passenger
 }

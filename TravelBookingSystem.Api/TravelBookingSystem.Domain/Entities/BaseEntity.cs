@@ -14,7 +14,7 @@ public class BaseEntity
     /// <summary>
     /// تاریخ ویرایش
     /// </summary>
-    public DateTime UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
     /// <summary>
     /// حذف شده؟
