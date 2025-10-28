@@ -20,10 +20,6 @@ public class FlightsController : ControllerBase
     /// <summary>
     /// Create Flight
     /// </summary>
-    /// <remarks>
-    /// ## Format Date
-    /// "14:20 1404/01/01"
-    /// </remarks>
     /// <param name="command"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>

@@ -12,15 +12,18 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
     private readonly IFlightRepository _flightRepository;
     private readonly ILogger<CreateFlightCommandHandler> _logger;
     private readonly IEventStore _eventStore;
+    private readonly ICacheService _cacheService;
 
     public CreateFlightCommandHandler(
         IFlightRepository flightRepository,
         ILogger<CreateFlightCommandHandler> logger,
-        IEventStore eventStore)
+        IEventStore eventStore,
+        ICacheService cacheService)
     {
         _flightRepository = flightRepository;
         _logger = logger;
         _eventStore = eventStore;
+        _cacheService = cacheService;
     }
 
     public async Task<FlightDto> Handle(CreateFlightCommand request, CancellationToken cancellationToken)
@@ -59,6 +62,8 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
             "system", // In production, this would come from authentication context
             1
         );
+
+        // TODO : add caching
 
         _logger.LogInformation("Invalidated flight cache after creating flight {FlightId}", createdFlight.Id);
 
