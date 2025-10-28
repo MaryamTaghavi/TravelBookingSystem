@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using TravelBookingSystem.Domain.Entities;
 using TravelBookingSystem.Domain.Interfaces;
 
@@ -48,6 +49,11 @@ public class FlightRepository : IFlightRepository
             _context.Flights.Remove(flight);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _context.Database.BeginTransactionAsync();
     }
 
     public async Task<bool> ExistsAsync(int id)

@@ -1,4 +1,6 @@
-﻿namespace TravelBookingSystem.Domain.Interfaces;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace TravelBookingSystem.Domain.Interfaces;
 
 public interface IRepository<T> where T : class
 {
@@ -8,6 +10,7 @@ public interface IRepository<T> where T : class
     Task UpdateAsync(T entity);
     Task DeleteAsync(int id);
     Task<bool> ExistsAsync(int id);
+    Task<IDbContextTransaction> BeginTransactionAsync();
 }
 
 public interface IFlightRepository : IRepository<Entities.Flight>

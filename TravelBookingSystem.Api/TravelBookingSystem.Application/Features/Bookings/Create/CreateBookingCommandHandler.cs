@@ -54,31 +54,43 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             throw new InvalidOperationException("Seat is already occupied");
         }
 
-        // Create booking
-        var booking = new Domain.Entities.Booking(request.FlightId, request.PassengerId, request.SeatNumber);
-        var createdBooking = await _bookingRepository.AddAsync(booking);
+        using var transaction = await _flightRepository.BeginTransactionAsync();
 
-        // Update available seats
-        flight.ReduceAvailableSeats();
-        await _flightRepository.UpdateAsync(flight);
+        try
+        {
+            // Create booking
+            var booking = new Domain.Entities.Booking(request.FlightId, request.PassengerId, request.SeatNumber);
+            var createdBooking = await _bookingRepository.AddAsync(booking);
 
-        // Store event
-        var bookingCreatedEvent = new BookingCreatedEvent(
-            createdBooking.Id,
-            createdBooking.FlightId,
-            createdBooking.PassengerId,
-            createdBooking.SeatNumber
-        );
+            // Update available seats
+            flight.ReduceAvailableSeats();
+            await _flightRepository.UpdateAsync(flight);
 
-        await _eventStore.SaveEventAsync(
-            createdBooking.Id.ToString(),
-            "Booking",
-            "BookingCreated",
-            bookingCreatedEvent,
-            "system", // In production, this would come from authentication context
-            1
-        );
+            // Store event
+            var bookingCreatedEvent = new BookingCreatedEvent(
+                createdBooking.Id,
+                createdBooking.FlightId,
+                createdBooking.PassengerId,
+                createdBooking.SeatNumber
+            );
 
-        return createdBooking.ToResponseDto(flight, passenger);
+            await _eventStore.SaveEventAsync(
+                createdBooking.Id.ToString(),
+                "Booking",
+                "BookingCreated",
+                bookingCreatedEvent,
+                "system", // In production, this would come from authentication context
+                1
+            );
+
+            await transaction.CommitAsync();
+            return createdBooking.ToResponseDto(flight, passenger);
+        }
+
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw new ArgumentException("create booking failed.");
+        }
     }
 }
