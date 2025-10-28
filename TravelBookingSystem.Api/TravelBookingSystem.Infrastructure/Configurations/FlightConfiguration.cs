@@ -38,5 +38,9 @@ public class FlightConfiguration : IEntityTypeConfiguration<Flight>
               .WithOne(e => e.Flight)
               .HasForeignKey(e => e.FlightId)
               .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(f => f.RowVersion)
+              .IsRowVersion()
+              .IsConcurrencyToken();
     }
 }

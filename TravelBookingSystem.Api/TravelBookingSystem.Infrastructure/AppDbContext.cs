@@ -1,5 +1,6 @@
 ﻿using TravelBookingSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using TravelBookingSystem.Infrastructure.Configurations;
 
 namespace TravelBookingSystem.Infrastructure;
 
@@ -16,9 +17,9 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TravelBookingSystem.Domain.Entities.Flight>()
-            .Property(f => f.RowVersion)
-            .IsRowVersion();
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(FlightConfiguration).Assembly);
     }
 
     // TODO : Seed Data for passenger

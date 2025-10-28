@@ -4,6 +4,8 @@ using TravelBookingSystem.Application.DTOs;
 using TravelBookingSystem.Domain.Interfaces;
 using TravelBookingSystem.Application.Mappings;
 using TravelBookingSystem.Domain.Events;
+using Microsoft.VisualBasic;
+using TravelBookingSystem.Domain.Entities;
 
 namespace TravelBookingSystem.Application.Features.Flights.Commands.Create;
 
@@ -35,14 +37,15 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
             throw new InvalidOperationException("Flight number already exists");
         }
 
-        var flight = new Domain.Entities.Flight(
+        var flight = new Flight(
             request.FlightNumber,
             request.Origin,
             request.Destination,
             request.DepartureTime,
             request.ArrivalTime,
             request.AvailableSeats,
-            request.Price
+            request.Price,
+            BitConverter.GetBytes(DateTime.Now.Ticks)
         );
 
         var createdFlight = await _flightRepository.AddAsync(flight);

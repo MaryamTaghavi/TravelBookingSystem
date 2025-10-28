@@ -63,8 +63,9 @@ public class Flight : BaseEntity
         Destination = string.Empty;
     }
 
+    // Because using In-Memory Database must set value for rowVersion
     public Flight(string flightNumber, string origin, string destination,
-                DateTime departureTime, DateTime arrivalTime, int availableSeats, decimal price)
+                DateTime departureTime, DateTime arrivalTime, int availableSeats, decimal price, byte[] rowVersion)
     {
         ValidateFlightNumber(flightNumber);
         ValidateLocation(origin, nameof(origin));
@@ -81,6 +82,7 @@ public class Flight : BaseEntity
         AvailableSeats = availableSeats;
         Price = price;
         CreateDate = DateTime.UtcNow;
+        RowVersion = rowVersion;
     }
 
     public void UpdateSeats(int newSeatCount)
@@ -130,7 +132,7 @@ public class Flight : BaseEntity
 
     private static void ValidateSeats(int seats)
     {
-        if (seats < 0)
+        if (seats <= 0)
             throw new ArgumentException("Available seats cannot be negative");
     }
 
