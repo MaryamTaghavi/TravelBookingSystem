@@ -32,3 +32,27 @@
 |--------|----------|-------------|
 | `POST` | `/api/bookings` | Create a new booking |
 | `GET` | `/api/bookings/flights/{flightId}` | Get all bookings for a specific flight |
+
+## Project Structure
+
+```
+TravelBookingSystem/
+├── src/
+│   ├── TravelBookingSystem.API/           # Web API layer
+│   │   ├── Controllers/                    # API controllers
+│   │   ├── Middleware/                     # Custom middleware
+│   │   └── Program.cs                      # Application entry point
+│   ├── TravelBookingSystem.Application/   # Application layer
+│   │   ├── DTOs/                          # Data Transfer Objects
+│   │   ├── Features/                      # CQRS commands and queries and validators
+│   │   └── Mappings/                      # AutoMapper profiles
+│   ├── TravelBookingSystem.Domain/        # Domain layer
+│   │   ├── Entities/                      # Domain entities
+│   │   ├── Interfaces/                    # Repository interfaces
+│   │   └── Events/                        # Domain events
+│   └── TravelBookingSystem.Infrastructure/ # Infrastructure layer
+│       ├── Data/                          # DbContext and configurations
+│       ├── Repositories/                  # Repository implementations
+│       └── Services/                      # External services
+└──
+```
