@@ -8,11 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TravelBookingSystem.Application\TravelBookingSystem.Application.csproj" />
+    <ProjectReference Include="..\TravelBookingSystem.Infrastructure\TravelBookingSystem.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
