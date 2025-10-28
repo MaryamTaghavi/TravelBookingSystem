@@ -22,6 +22,11 @@ public class Booking : BaseEntity
     /// </summary>
     public DateTime BookingDate { get; private set; }
 
+    private Booking()
+    {
+        SeatNumber = string.Empty;
+    }
+
     public Booking(int flightId, int passengerId, string seatNumber)
     {
         ValidateSeatNumber(seatNumber);
