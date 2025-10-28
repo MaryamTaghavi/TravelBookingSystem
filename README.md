@@ -4,6 +4,7 @@
 - **Booking System**: Create bookings with seat availability validation
 - **Passenger Management**: Handle passenger information and validation
 - **CQRS Pattern**: Command Query Responsibility Segregation for better scalability
+- **MediatR Pattern**: Encourages clean architecture and CQRS-style organization
 - **Event Sourcing**: Track changes and events for audit purposes
 - **In-Memory Caching**: High-performance caching for flight listings
 - **Global Exception Handling**: Comprehensive error handling with proper HTTP status codes
@@ -60,7 +61,12 @@ TravelBookingSystem/
 ## Security Features
 
 - Input validation using FluentValidation
-- SQL injection prevention through Entity Framework
 - Global exception handling
 - Proper HTTP status codes
 - Request/response logging
+
+## Performance Features
+
+- In-Memory caching for frequently accessed data
+- Async/await pattern throughout
+- Entity Framework optimizations
