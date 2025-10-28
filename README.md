@@ -9,3 +9,9 @@
 - **Global Exception Handling**: Comprehensive error handling with proper HTTP status codes
 - **Swagger/OpenAPI**: Complete API documentation
 - **Unit Tests**: Comprehensive test coverage using xUnit
+
+## Prerequisites
+
+- .NET 8 SDK
+- In-Memory DataBase
+- In-Memory Caching
