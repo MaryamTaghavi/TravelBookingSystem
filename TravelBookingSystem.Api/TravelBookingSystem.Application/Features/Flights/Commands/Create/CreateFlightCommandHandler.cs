@@ -63,7 +63,7 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
             1
         );
 
-        // TODO : add caching
+        await _cacheService.RemoveByPatternAsync("flights:");
 
         _logger.LogInformation("Add new flight cache after creating flight {FlightId}", createdFlight.Id);
 

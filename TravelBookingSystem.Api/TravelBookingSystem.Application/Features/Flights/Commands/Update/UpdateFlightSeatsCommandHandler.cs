@@ -54,7 +54,8 @@ public class UpdateFlightSeatsCommandHandler : IRequestHandler<UpdateFlightSeats
             2 // TODO: This should be incremented based on existing events
         );
 
-        // TODO: AddCache
+        await _cacheService.RemoveByPatternAsync("flights:");
+
         _logger.LogInformation("Update flight cache after updating seats for flight {FlightId}", flight.Id);
 
         return flight.ToDto();

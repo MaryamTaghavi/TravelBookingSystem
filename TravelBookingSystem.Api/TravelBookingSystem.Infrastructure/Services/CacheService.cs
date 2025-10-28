@@ -9,6 +9,7 @@ public class CacheService : ICacheService
 {
     private readonly IMemoryCache _cache;
     private readonly ILogger<CacheService> _logger;
+    private static readonly HashSet<string> _keys = new();
 
     public CacheService(IMemoryCache cache, ILogger<CacheService> logger)
     {
@@ -53,10 +54,24 @@ public class CacheService : ICacheService
             });
 
             _cache.Set(key, json, options);
+
+            _keys.Add(key);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error setting cache value for key: {Key}", key);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task RemoveByPatternAsync(string pattern)
+    {
+        var keysToRemove = _keys.Where(k => k.StartsWith(pattern.Split(':')[0])).ToList();
+        foreach (var key in keysToRemove)
+        {
+            _cache.Remove(key);
+            _keys.Remove(key);
         }
 
         return Task.CompletedTask;
