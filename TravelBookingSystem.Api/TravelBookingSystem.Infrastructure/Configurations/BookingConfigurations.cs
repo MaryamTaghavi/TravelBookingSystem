@@ -8,6 +8,8 @@ public class BookingConfigurations : IEntityTypeConfiguration<Booking>
 {
     public void Configure(EntityTypeBuilder<Booking> builder)
     {
+        builder.HasKey(e => e.Id);
+
         builder.HasOne(b => b.Passenger)
                .WithMany(p => p.Bookings)
                .HasForeignKey(b => b.PassengerId)
@@ -31,5 +33,7 @@ public class BookingConfigurations : IEntityTypeConfiguration<Booking>
 
         builder.Property(p => p.FlightId)
                 .IsRequired(true);
+
+        builder.HasIndex(e => new { e.FlightId, e.SeatNumber }).IsUnique();
     }
 }

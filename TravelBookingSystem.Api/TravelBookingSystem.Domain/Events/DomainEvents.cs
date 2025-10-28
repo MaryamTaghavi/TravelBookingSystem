@@ -35,3 +35,19 @@ public class FlightSeatsUpdatedEvent : DomainEvent
         NewSeatCount = newSeatCount;
     }
 }
+
+public class BookingCreatedEvent : DomainEvent
+{
+    public int BookingId { get; }
+    public int FlightId { get; }
+    public int PassengerId { get; }
+    public string SeatNumber { get; }
+
+    public BookingCreatedEvent(int bookingId, int flightId, int passengerId, string seatNumber)
+    {
+        BookingId = bookingId;
+        FlightId = flightId;
+        PassengerId = passengerId;
+        SeatNumber = seatNumber;
+    }
+}

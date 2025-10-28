@@ -15,3 +15,13 @@ public interface IFlightRepository : IRepository<Entities.Flight>
     Task<IEnumerable<Entities.Flight>> GetFlightsByFiltersAsync(string? origin, string? destination, DateTime? date);
     Task<Entities.Flight?> GetByFlightNumberAsync(string flightNumber);
 }
+
+public interface IBookingRepository : IRepository<Entities.Booking>
+{
+    Task<bool> IsSeatAvailableAsync(int flightId, string seatNumber);
+}
+
+public interface IPassengerRepository : IRepository<Entities.Passenger>
+{
+    // TODO : Add methods if need
+}

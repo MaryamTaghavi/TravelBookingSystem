@@ -26,3 +26,18 @@ public static class FlightMappings
         return flights.Select(f => f.ToDto());
     }
 }
+
+public static class BookingMappings
+{
+    public static BookingResponseDto ToResponseDto(this Booking booking, Flight flight, Passenger passenger)
+    {
+        return new BookingResponseDto
+        {
+            Id = booking.Id,
+            FlightNumber = flight.FlightNumber,
+            PassengerName = passenger.FullName,
+            SeatNumber = booking.SeatNumber,
+            BookingDate = booking.BookingDate,
+        };
+    }
+}

@@ -8,6 +8,8 @@ public class FlightConfiguration : IEntityTypeConfiguration<Flight>
 {
     public void Configure(EntityTypeBuilder<Flight> builder)
     {
+        builder.HasKey(e => e.Id);
+
         builder.Property(p => p.FlightNumber)
             .IsRequired(true).HasMaxLength(10);
 
@@ -29,5 +31,12 @@ public class FlightConfiguration : IEntityTypeConfiguration<Flight>
 
         builder.Property(p => p.CreateDate)
             .IsRequired(true);
+
+        builder.HasIndex(e => e.FlightNumber).IsUnique();
+
+        builder.HasMany(e => e.Bookings)
+              .WithOne(e => e.Flight)
+              .HasForeignKey(e => e.FlightId)
+              .OnDelete(DeleteBehavior.Cascade);
     }
 }
