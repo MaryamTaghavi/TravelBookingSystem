@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using TravelBookingSystem.Application.DTOs;
 using TravelBookingSystem.Domain.Interfaces;
 using TravelBookingSystem.Application.Mappings;
+using TravelBookingSystem.Domain.Events;
 
 namespace TravelBookingSystem.Application.Features.Flights.Commands.Create;
 
@@ -10,13 +11,16 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
 {
     private readonly IFlightRepository _flightRepository;
     private readonly ILogger<CreateFlightCommandHandler> _logger;
+    private readonly IEventStore _eventStore;
 
     public CreateFlightCommandHandler(
         IFlightRepository flightRepository,
-        ILogger<CreateFlightCommandHandler> logger)
+        ILogger<CreateFlightCommandHandler> logger,
+        IEventStore eventStore)
     {
         _flightRepository = flightRepository;
         _logger = logger;
+        _eventStore = eventStore;
     }
 
     public async Task<FlightDto> Handle(CreateFlightCommand request, CancellationToken cancellationToken)
@@ -39,7 +43,23 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
         );
 
         var createdFlight = await _flightRepository.AddAsync(flight);
-      
+
+        var flightCreatedEvent = new FlightCreatedEvent(
+            createdFlight.Id,
+            createdFlight.FlightNumber,
+            createdFlight.Origin,
+            createdFlight.Destination
+        );
+
+        await _eventStore.SaveEventAsync(
+            createdFlight.Id.ToString(),
+            "Flight",
+            "FlightCreated",
+            flightCreatedEvent,
+            "system", // In production, this would come from authentication context
+            1
+        );
+
         _logger.LogInformation("Invalidated flight cache after creating flight {FlightId}", createdFlight.Id);
 
         return createdFlight.ToDto();
