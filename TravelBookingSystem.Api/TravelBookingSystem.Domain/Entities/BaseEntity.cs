@@ -10,10 +10,6 @@ public class BaseEntity
     /// </summary>
     [Key]
     public int Id { get; set; }
-    /// <summary>
-    /// تاریخ ایجاد
-    /// </summary>
-    public DateTime CreateDate { get; set; } = DateTime.Now;
 
     /// <summary>
     /// تاریخ ویرایش
