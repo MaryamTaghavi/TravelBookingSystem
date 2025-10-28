@@ -39,6 +39,9 @@ public class Flight : BaseEntity
     /// </summary>
     public decimal Price { get; private set; }
 
+    /// <summary>
+    /// زمان ایجاد
+    /// </summary>
     public DateTime CreateDate { get; private set; }
 
     /// <summary>
