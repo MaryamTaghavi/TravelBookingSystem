@@ -15,3 +15,20 @@
 - .NET 8 SDK
 - In-Memory DataBase
 - In-Memory Caching
+
+## API Endpoints
+
+### Flights
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/flights` | Create a new flight |
+| `GET` | `/api/flights` | Get flights with optional filters |
+| `PUT` | `/api/flights/{id}/seats` | Update available seats for a flight |
+
+### Bookings
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/bookings` | Create a new booking |
+| `GET` | `/api/bookings/flights/{flightId}` | Get all bookings for a specific flight |
