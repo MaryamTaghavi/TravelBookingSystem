@@ -14,5 +14,4 @@ public interface IFlightRepository : IRepository<Entities.Flight>
 {
     Task<IEnumerable<Entities.Flight>> GetFlightsByFiltersAsync(string? origin, string? destination, DateTime? date);
     Task<Entities.Flight?> GetByFlightNumberAsync(string flightNumber);
-    Task UpdateAvailableSeatsAsync(int flightId, int newSeatCount);
 }
