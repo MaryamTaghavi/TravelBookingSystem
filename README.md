@@ -56,3 +56,11 @@ TravelBookingSystem/
 │       └── Services/                      # External services
 └──
 ```
+
+## Security Features
+
+- Input validation using FluentValidation
+- SQL injection prevention through Entity Framework
+- Global exception handling
+- Proper HTTP status codes
+- Request/response logging
