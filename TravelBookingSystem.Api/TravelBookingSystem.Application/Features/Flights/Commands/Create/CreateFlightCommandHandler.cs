@@ -31,7 +31,7 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
     public async Task<FlightDto> Handle(CreateFlightCommand request, CancellationToken cancellationToken)
     {
         // Check if flight number already exists
-        var existingFlight = await _flightRepository.GetByFlightNumberAsync(request.FlightNumber);
+        var existingFlight = await _flightRepository.GetByFlightNumberAsync(request.FlightNumber, cancellationToken);
         if (existingFlight != null)
         {
             throw new InvalidOperationException("Flight number already exists");
@@ -48,7 +48,7 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
             BitConverter.GetBytes(DateTime.Now.Ticks)
         );
 
-        var createdFlight = await _flightRepository.AddAsync(flight);
+        var createdFlight = await _flightRepository.AddAsync(flight , cancellationToken);
 
         var flightCreatedEvent = new FlightCreatedEvent(
             createdFlight.Id,

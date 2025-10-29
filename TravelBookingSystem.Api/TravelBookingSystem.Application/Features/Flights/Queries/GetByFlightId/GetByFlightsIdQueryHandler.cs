@@ -16,7 +16,7 @@ public class GetBookingsByFlightIdQueryHandler : IRequestHandler<GetByFlightIdQu
 
     public async Task<IEnumerable<BookingDto>> Handle(GetByFlightIdQuery request, CancellationToken cancellationToken)
     {
-        var bookings = await _bookingRepository.GetBookingsByFlightIdAsync(request.FlightId);
+        var bookings = await _bookingRepository.GetBookingsByFlightIdAsync(request.FlightId, cancellationToken);
         return bookings.ToDto();
     }
 }

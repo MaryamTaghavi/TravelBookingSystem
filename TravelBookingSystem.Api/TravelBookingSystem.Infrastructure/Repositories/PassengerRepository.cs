@@ -10,38 +10,39 @@ public class PassengerRepository : IPassengerRepository
 
     public PassengerRepository(AppDbContext context) => _context = context;
 
-    public Task<Passenger> AddAsync(Passenger entity)
+    public async Task<Passenger> AddAsync(Passenger entity , CancellationToken cancellationToken)
+    {
+        _context.Passengers.Add(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+        return entity;
+    }
+
+    public Task DeleteAsync(int id, CancellationToken cancellationToken)
     {
         //TODO : must be implement
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(int id)
+    public Task<bool> ExistsAsync(int id, CancellationToken cancellationToken)
     {
         //TODO : must be implement
         throw new NotImplementedException();
     }
 
-    public Task<bool> ExistsAsync(int id)
+    public Task<IEnumerable<Passenger>> GetAllAsync(CancellationToken cancellationToken)
     {
         //TODO : must be implement
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Passenger>> GetAllAsync()
-    {
-        //TODO : must be implement
-        throw new NotImplementedException();
-    }
-
-    public async Task<Passenger?> GetByIdAsync(int id)
+    public async Task<Passenger?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await _context.Passengers
                    .Include(p => p.Bookings)
-                   .FirstOrDefaultAsync(p => p.Id == id);
+                   .FirstOrDefaultAsync(p => p.Id == id , cancellationToken);
     }
 
-    public Task UpdateAsync(Passenger entity)
+    public Task UpdateAsync(Passenger entity, CancellationToken cancellationToken)
     {
         //TODO : must be implement
         throw new NotImplementedException();

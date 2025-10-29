@@ -39,7 +39,7 @@ public class GetFlightsQueryHandler : IRequestHandler<GetFlightsQuery, IEnumerab
         var flights = await _flightRepository.GetFlightsByFiltersAsync(
             request.Origin,
             request.Destination,
-            request.Date);
+            request.Date , cancellationToken);
 
         var flightDtos = flights.ToDto();
 

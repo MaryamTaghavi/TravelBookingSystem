@@ -28,7 +28,7 @@ public class UpdateFlightSeatsCommandHandler : IRequestHandler<UpdateFlightSeats
 
     public async Task<FlightDto> Handle(UpdateFlightSeatsCommand request, CancellationToken cancellationToken)
     {
-        var flight = await _flightRepository.GetByIdAsync(request.FlightId);
+        var flight = await _flightRepository.GetByIdAsync(request.FlightId , cancellationToken);
         if (flight == null)
         {
             throw new KeyNotFoundException("Flight not found");
@@ -36,7 +36,7 @@ public class UpdateFlightSeatsCommandHandler : IRequestHandler<UpdateFlightSeats
 
         var previousSeatCount = flight.AvailableSeats;
         flight.UpdateSeats(request.AvailableSeats);
-        await _flightRepository.UpdateAsync(flight);
+        await _flightRepository.UpdateAsync(flight, cancellationToken);
 
         // Store event
         var seatsUpdatedEvent = new FlightSeatsUpdatedEvent(

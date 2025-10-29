@@ -28,14 +28,14 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     public async Task<BookingResponseDto> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         // Validate flight exists
-        var flight = await _flightRepository.GetByIdAsync(request.FlightId);
+        var flight = await _flightRepository.GetByIdAsync(request.FlightId , cancellationToken);
         if (flight == null)
         {
             throw new KeyNotFoundException("Flight not found");
         }
 
         // Validate passenger exists
-        var passenger = await _passengerRepository.GetByIdAsync(request.PassengerId);
+        var passenger = await _passengerRepository.GetByIdAsync(request.PassengerId, cancellationToken);
         if (passenger == null)
         {
             throw new KeyNotFoundException("Passenger not found");
@@ -48,23 +48,23 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         }
 
         // Check if seat is already taken
-        var isSeatAvailable = await _bookingRepository.IsSeatAvailableAsync(request.FlightId, request.SeatNumber);
+        var isSeatAvailable = await _bookingRepository.IsSeatAvailableAsync(request.FlightId, request.SeatNumber , cancellationToken);
         if (!isSeatAvailable)
         {
             throw new InvalidOperationException("Seat is already occupied");
         }
 
-        using var transaction = await _flightRepository.BeginTransactionAsync();
+        using var transaction = await _flightRepository.BeginTransactionAsync(cancellationToken);
 
         try
         {
             // Create booking
             var booking = new Domain.Entities.Booking(request.FlightId, request.PassengerId, request.SeatNumber);
-            var createdBooking = await _bookingRepository.AddAsync(booking);
+            var createdBooking = await _bookingRepository.AddAsync(booking, cancellationToken);
 
             // Update available seats
             flight.ReduceAvailableSeats();
-            await _flightRepository.UpdateAsync(flight);
+            await _flightRepository.UpdateAsync(flight, cancellationToken);
 
             // Store event
             var bookingCreatedEvent = new BookingCreatedEvent(

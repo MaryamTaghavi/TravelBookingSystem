@@ -11,7 +11,8 @@ public class EventStore : IEventStore
 
     public EventStore(AppDbContext context) => _context = context;
 
-    public async Task SaveEventAsync(string aggregateId, string aggregateType, string eventType, object eventData, string userId, int version)
+    public async Task SaveEventAsync(string aggregateId, string aggregateType, string eventType, object eventData, string userId, int version
+        , CancellationToken cancellationToken)
     {
         var eventJson = JsonSerializer.Serialize(eventData, new JsonSerializerOptions
         {
@@ -21,14 +22,14 @@ public class EventStore : IEventStore
         var eventRecord = new Event(aggregateId, aggregateType, eventType, eventJson, userId, version);
 
         _context.Events.Add(eventRecord);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Event>> GetEventsAsync(string aggregateId)
+    public async Task<IEnumerable<Event>> GetEventsAsync(string aggregateId, CancellationToken cancellationToken)
     {
         return await _context.Events
             .Where(e => e.AggregateId == aggregateId)
             .OrderBy(e => e.Version)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }
