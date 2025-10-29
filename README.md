@@ -17,6 +17,31 @@
 - In-Memory DataBase
 - In-Memory Caching
 
+## Setup Instructions
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/MaryamTaghavi/TravelBookingSystem.git
+   cd maryamTaghavi-task
+   ```
+
+2. **Restore dependencies**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Run the application**
+   ```bash
+   cd src/TravelBookingSystem.API
+   dotnet run
+   ```
+
+4. **Access the API**
+   - API: `https://localhost:7131` or `http://localhost:5031`
+   - Swagger UI: `https://localhost:7131/swagger` or `http://localhost:5031/swagger`
+
 ## API Endpoints
 
 ### Flights
