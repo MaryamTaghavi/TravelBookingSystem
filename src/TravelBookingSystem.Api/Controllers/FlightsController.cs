@@ -40,13 +40,15 @@ public class FlightsController : ControllerBase
     /// <param name="origin">Filter by origin city</param>
     /// <param name="destination">Filter by destination city</param>
     /// <param name="date">Filter by departure date</param>
+    /// <param name="cancellationToken">Filter by departure date</param>
     /// <returns>List of flights</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<FlightDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<FlightDto>>> GetFlights(
         [FromQuery] string? origin = null,
         [FromQuery] string? destination = null,
-        [FromQuery] DateTime? date = null)
+        [FromQuery] DateTime? date = null , 
+        CancellationToken cancellationToken = default)
     {
         var query = new GetFlightsQuery
         {
@@ -55,7 +57,7 @@ public class FlightsController : ControllerBase
             Date = date
         };
 
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query , cancellationToken);
         return Ok(result);
     }
 
@@ -64,15 +66,16 @@ public class FlightsController : ControllerBase
     /// </summary>
     /// <param name="id">Flight ID</param>
     /// <param name="command">Seat update details</param>
+    /// <param name="cancellationToken">Filter by departure date</param>
     /// <returns>Updated flight information</returns>
     [HttpPut("{id}/seats")]
     [ProducesResponseType(typeof(FlightDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<FlightDto>> UpdateFlightSeats(int id, [FromBody] UpdateFlightSeatsCommand command)
+    public async Task<ActionResult<FlightDto>> UpdateFlightSeats(int id, [FromBody] UpdateFlightSeatsCommand command, CancellationToken cancellationToken = default)
     {
         command.FlightId = id;
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
         return Ok(result);
     }
 }

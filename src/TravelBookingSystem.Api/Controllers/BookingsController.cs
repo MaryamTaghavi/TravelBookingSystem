@@ -22,13 +22,14 @@ public class BookingsController : ControllerBase
     /// Create a new booking
     /// </summary>
     /// <param name="command">Booking creation details</param>
+    /// <param name="cancellationToken">Filter by departure date</param>
     /// <returns>Created booking information</returns>
     [HttpPost]
     [ProducesResponseType(typeof(BookingResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] CreateBookingCommand command)
+    public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] CreateBookingCommand command , CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command , cancellationToken);
         return CreatedAtAction(nameof(GetBookingsByFlightId), new { flightId = command.FlightId }, result);
     }
 
@@ -36,13 +37,14 @@ public class BookingsController : ControllerBase
     /// Get all bookings for a specific flight
     /// </summary>
     /// <param name="flightId">Flight ID</param>
+    /// <param name="cancellationToken">Filter by departure date</param>
     /// <returns>List of bookings for the flight</returns>
     [HttpGet("flights/{flightId}")]
     [ProducesResponseType(typeof(IEnumerable<BookingDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsByFlightId(int flightId)
+    public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookingsByFlightId(int flightId, CancellationToken cancellationToken = default)
     {
         var query = new GetByFlightIdQuery { FlightId = flightId };
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query , cancellationToken);
         return Ok(result);
     }
 }
