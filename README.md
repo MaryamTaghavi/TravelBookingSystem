@@ -1,3 +1,12 @@
+## Architecture Overview
+
+This project follows **Clean Architecture** with clear separation of concerns across four main layers:
+
+- **Domain Layer**: Core business entities, interfaces, and domain events
+- **Application Layer**: Business logic, DTOs, CQRS commands/queries, and validation
+- **Infrastructure Layer**: Data access, repositories, caching, and external services
+- **API Layer**: Controllers, middleware, and application configuration
+  
 ## Features
 
 - **Flight Management**: Create, retrieve, and update flight information
