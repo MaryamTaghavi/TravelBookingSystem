@@ -63,7 +63,8 @@ public class CreateFlightCommandHandler : IRequestHandler<CreateFlightCommand, F
             "FlightCreated",
             flightCreatedEvent,
             "system", // In production, this would come from authentication context
-            1
+            1,
+            cancellationToken
         );
 
         await _cacheService.RemoveByPatternAsync("flights:");

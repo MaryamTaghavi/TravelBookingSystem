@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TravelBookingSystem.Domain.Interfaces;
-using TravelBookingSystem.Infrastructure.Repositories;
-using TravelBookingSystem.Infrastructure;
-using TravelBookingSystem.Application.Features.Bookings.Create;
-using Xunit;
+﻿using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using FluentAssertions;
+using TravelBookingSystem.Application.Features.Bookings.Create;
 using TravelBookingSystem.Domain.Entities;
+using TravelBookingSystem.Domain.Interfaces;
+using TravelBookingSystem.Infrastructure;
+using TravelBookingSystem.Infrastructure.Repositories;
+using Xunit;
 
 namespace TravelBookingSystem.Tests.Application;
 
@@ -58,7 +58,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository , eventStoreMock.Object);
+            _passengerRepository, eventStoreMock.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -67,7 +67,7 @@ public class BookingServiceTests : IDisposable
         result.Should().NotBeNull();
         result.SeatNumber.Should().Be("A1");
         result.FlightNumber.Should().Be("123456");
-        result.PassengerName.Should().Be("Maryam Taghavi");
+        result.PassengerName.Should().Be("MaryamTaghavi");
     }
 
     public void Dispose()

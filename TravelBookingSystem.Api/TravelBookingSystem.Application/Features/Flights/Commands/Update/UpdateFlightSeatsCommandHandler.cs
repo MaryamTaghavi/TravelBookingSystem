@@ -51,7 +51,8 @@ public class UpdateFlightSeatsCommandHandler : IRequestHandler<UpdateFlightSeats
             "FlightSeatsUpdated",
             seatsUpdatedEvent,
             "system", // TODO: In production, this would come from authentication context
-            2 // TODO: This should be incremented based on existing events
+            2, // TODO: This should be incremented based on existing events
+            cancellationToken
         );
 
         await _cacheService.RemoveByPatternAsync("flights:");

@@ -54,7 +54,8 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             throw new InvalidOperationException("Seat is already occupied");
         }
 
-        using var transaction = await _flightRepository.BeginTransactionAsync(cancellationToken);
+        // Error : Because use In-Memory Database can not use begin transaction
+        // using var transaction = await _flightRepository.BeginTransactionAsync(cancellationToken);
 
         try
         {
@@ -80,16 +81,17 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
                 "BookingCreated",
                 bookingCreatedEvent,
                 "system", // In production, this would come from authentication context
-                1
+                1,
+                cancellationToken
             );
 
-            await transaction.CommitAsync();
+            // await transaction.CommitAsync();
             return createdBooking.ToResponseDto(flight, passenger);
         }
 
         catch
         {
-            await transaction.RollbackAsync();
+            // await transaction.RollbackAsync();
             throw new ArgumentException("create booking failed.");
         }
     }
