@@ -12,8 +12,7 @@ public class PassengerRepository : IPassengerRepository
 
     public async Task<Passenger> AddAsync(Passenger entity , CancellationToken cancellationToken)
     {
-        _context.Passengers.Add(entity);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.Passengers.AddAsync(entity , cancellationToken);
         return entity;
     }
 
@@ -42,7 +41,7 @@ public class PassengerRepository : IPassengerRepository
                    .FirstOrDefaultAsync(p => p.Id == id , cancellationToken);
     }
 
-    public Task UpdateAsync(Passenger entity, CancellationToken cancellationToken)
+    public void Update(Passenger entity)
     {
         //TODO : must be implement
         throw new NotImplementedException();

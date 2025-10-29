@@ -13,17 +13,20 @@ public class UpdateFlightSeatsCommandHandler : IRequestHandler<UpdateFlightSeats
     private readonly IEventStore _eventStore;
     private readonly ICacheService _cacheService;
     private readonly ILogger<UpdateFlightSeatsCommandHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
     public UpdateFlightSeatsCommandHandler(
         IFlightRepository flightRepository,
         IEventStore eventStore,
         ICacheService cacheService,
-        ILogger<UpdateFlightSeatsCommandHandler> logger)
+        ILogger<UpdateFlightSeatsCommandHandler> logger,
+        IUnitOfWork unitOfWork)
     {
         _flightRepository = flightRepository;
         _eventStore = eventStore;
         _cacheService = cacheService;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<FlightDto> Handle(UpdateFlightSeatsCommand request, CancellationToken cancellationToken)
@@ -36,8 +39,8 @@ public class UpdateFlightSeatsCommandHandler : IRequestHandler<UpdateFlightSeats
 
         var previousSeatCount = flight.AvailableSeats;
         flight.UpdateSeats(request.AvailableSeats);
-        await _flightRepository.UpdateAsync(flight, cancellationToken);
-
+        _flightRepository.Update(flight);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
         // Store event
         var seatsUpdatedEvent = new FlightSeatsUpdatedEvent(
             flight.Id,

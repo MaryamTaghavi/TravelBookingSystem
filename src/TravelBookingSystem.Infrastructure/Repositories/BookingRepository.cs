@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading;
 using TravelBookingSystem.Domain.Entities;
 using TravelBookingSystem.Domain.Interfaces;
 
@@ -25,17 +26,15 @@ public class BookingRepository : IBookingRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Booking> AddAsync(Booking entity, CancellationToken cancellationToken)
+    public async Task<Booking> AddAsync(Booking entity , CancellationToken cancellationToken = default)
     {
-        _context.Bookings.Add(entity);
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.Bookings.AddAsync(entity , cancellationToken);
         return entity;
     }
 
-    public async Task UpdateAsync(Booking entity, CancellationToken cancellationToken)
+    public void Update(Booking entity)
     {
         _context.Bookings.Update(entity);
-        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken)
@@ -44,7 +43,6 @@ public class BookingRepository : IBookingRepository
         if (booking != null)
         {
             _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 

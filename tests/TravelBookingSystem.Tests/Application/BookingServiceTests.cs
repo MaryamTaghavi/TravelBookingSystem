@@ -14,6 +14,7 @@ namespace TravelBookingSystem.Tests.Application;
 public class BookingServiceTests : IDisposable
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IBookingRepository _bookingRepository;
     private readonly IFlightRepository _flightRepository;
     private readonly IPassengerRepository _passengerRepository;
@@ -28,6 +29,7 @@ public class BookingServiceTests : IDisposable
         _bookingRepository = new BookingRepository(_context);
         _flightRepository = new FlightRepository(_context);
         _passengerRepository = new PassengerRepository(_context);
+        _unitOfWork = new EfUnitOfWork(_context);
     }
 
     [Fact]
@@ -48,7 +50,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository, eventStoreMock.Object);
+            _passengerRepository, eventStoreMock.Object , _unitOfWork);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -72,7 +74,8 @@ public class BookingServiceTests : IDisposable
         // Arrange
         var flight = await _flightRepository.GetByIdAsync(1);
         flight!.UpdateSeats(0);
-        await _flightRepository.UpdateAsync(flight);
+        _flightRepository.Update(flight);
+        await _unitOfWork.SaveChangesAsync();
 
         var command = new CreateBookingCommand
         {
@@ -83,7 +86,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository, eventStoreMock.Object);
+            _passengerRepository, eventStoreMock.Object , _unitOfWork);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -111,7 +114,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository, eventStoreMock.Object);
+            _passengerRepository, eventStoreMock.Object, _unitOfWork);
 
         await handler.Handle(firstCommand, CancellationToken.None);
 
@@ -123,7 +126,7 @@ public class BookingServiceTests : IDisposable
             SeatNumber = "A1"
         };
 
-        SeedData();
+        await SeedData();
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -150,7 +153,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
                 _bookingRepository, _flightRepository,
-                _passengerRepository, eventStoreMock.Object);
+                _passengerRepository, eventStoreMock.Object, _unitOfWork);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
@@ -177,7 +180,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
                 _bookingRepository, _flightRepository,
-                _passengerRepository, eventStoreMock.Object);
+                _passengerRepository, eventStoreMock.Object, _unitOfWork);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
@@ -199,6 +202,8 @@ public class BookingServiceTests : IDisposable
         var passenger = new Passenger("MaryamTaghavi", "m.taghavi.ce@gmail.com", "987654", "09103160108");
 
         await _passengerRepository.AddAsync(passenger);
+
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public void Dispose()

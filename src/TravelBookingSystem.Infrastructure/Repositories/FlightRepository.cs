@@ -28,15 +28,13 @@ public class FlightRepository : IFlightRepository
 
     public async Task<Flight> AddAsync(Flight entity , CancellationToken cancellationToken)
     {
-        _context.Flights.Add(entity);
-        await _context.SaveChangesAsync(cancellationToken);
+         await _context.Flights.AddAsync(entity , cancellationToken);
         return entity;
     }
 
-    public async Task UpdateAsync(Flight entity, CancellationToken cancellationToken)
+    public void Update(Flight entity)
     {
         _context.Flights.Update(entity);
-        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken)
@@ -45,7 +43,6 @@ public class FlightRepository : IFlightRepository
         if (flight != null)
         {
             _context.Flights.Remove(flight);
-            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 
