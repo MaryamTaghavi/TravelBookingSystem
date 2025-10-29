@@ -157,6 +157,30 @@ public class FlightServiceTests : IDisposable
         result.AvailableSeats.Should().Be(200);
     }
 
+    [Fact]
+    public async Task UpdateFlightSeats_WithNonExistentFlight_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<UpdateFlightSeatsCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+        var cacheServiceMock = new Mock<ICacheService>();
+
+        // Arrange
+        var command = new UpdateFlightSeatsCommand
+        {
+            FlightId = 999, // Non-existent flight
+            AvailableSeats = 200
+        };
+
+        var handler = new UpdateFlightSeatsCommandHandler(_flightRepository, eventStoreMock.Object,
+                            cacheServiceMock.Object, loggerMock.Object);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
+            () => handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Contain("Flight not found");
+    }
+
     public void Dispose()
     {
         _context.Dispose();
