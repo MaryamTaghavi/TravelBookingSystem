@@ -95,6 +95,35 @@ public class FlightServiceTests : IDisposable
         exception.Message.Should().Contain("Flight number already exists");
     }
 
+    [Fact]
+    public async Task CreateFlight_WithInvalidTimes_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<CreateFlightCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+        var cacheServiceMock = new Mock<ICacheService>();
+
+        // Arrange
+        var command = new CreateFlightCommand
+        {
+            FlightNumber = "123456",
+            Origin = "Yazd",
+            Destination = "Mashhad",
+            DepartureTime = DateTime.UtcNow.AddDays(3),
+            ArrivalTime = DateTime.UtcNow.AddDays(3).AddHours(-1), // Arrival before departure
+            AvailableSeats = 120,
+            Price = 4_000_000,
+        };
+
+        var handler = new CreateFlightCommandHandler(_flightRepository, loggerMock.Object,
+                            eventStoreMock.Object, cacheServiceMock.Object);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            () => handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Contain("Departure time must be before arrival time");
+    }
+
     public void Dispose()
     {
         _context.Dispose();
