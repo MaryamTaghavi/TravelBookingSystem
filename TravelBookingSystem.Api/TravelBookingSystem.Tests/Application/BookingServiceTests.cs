@@ -36,17 +36,7 @@ public class BookingServiceTests : IDisposable
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
 
-        // Seed Flight
-        var flight = new Flight("123456", "Yazd", "Mashhad",
-            DateTime.UtcNow.AddDays(3), DateTime.UtcNow.AddDays(3).AddHours(2),
-            120, 4_000_000, BitConverter.GetBytes(DateTime.Now.Ticks));
-
-        await _flightRepository.AddAsync(flight);
-
-        // Seed Passenger
-        var passenger = new Passenger("MaryamTaghavi", "m.taghavi.ce@gmail.com", "987654", "09103160108");
-
-        await _passengerRepository.AddAsync(passenger);
+        SeedData();
 
         // Arrange
         var command = new CreateBookingCommand
@@ -68,6 +58,61 @@ public class BookingServiceTests : IDisposable
         result.SeatNumber.Should().Be("A1");
         result.FlightNumber.Should().Be("123456");
         result.PassengerName.Should().Be("MaryamTaghavi");
+    }
+
+    [Fact]
+    public async Task CreateBooking_WithOccupiedSeat_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+
+        SeedData();
+
+        // Arrange
+        // First booking
+        var firstCommand = new CreateBookingCommand
+        {
+            FlightId = 1,
+            PassengerId = 1,
+            SeatNumber = "A1"
+        };
+
+        var handler = new CreateBookingCommandHandler(
+            _bookingRepository, _flightRepository,
+            _passengerRepository, eventStoreMock.Object);
+
+        await handler.Handle(firstCommand, CancellationToken.None);
+
+        // Second booking with same seat
+        var secondCommand = new CreateBookingCommand
+        {
+            FlightId = 1,
+            PassengerId = 2,
+            SeatNumber = "A1"
+        };
+
+        SeedData();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => handler.Handle(secondCommand, CancellationToken.None));
+
+        exception.Message.Should().Contain("Seat is already occupied");
+    }
+
+    private async void SeedData()
+    {
+        // Seed Flight
+        var flight = new Flight("123456", "Yazd", "Mashhad",
+            DateTime.UtcNow.AddDays(3), DateTime.UtcNow.AddDays(3).AddHours(2),
+            120, 4_000_000, BitConverter.GetBytes(DateTime.Now.Ticks));
+
+        await _flightRepository.AddAsync(flight);
+
+        // Seed Passenger
+        var passenger = new Passenger("MaryamTaghavi", "m.taghavi.ce@gmail.com", "987654", "09103160108");
+
+        await _passengerRepository.AddAsync(passenger);
     }
 
     public void Dispose()

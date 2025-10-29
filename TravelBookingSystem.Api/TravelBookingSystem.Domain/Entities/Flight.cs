@@ -94,7 +94,7 @@ public class Flight : BaseEntity
 
     public void ReduceAvailableSeats()
     {
-        if (AvailableSeats <= 0)
+        if (AvailableSeats < 0)
             throw new InvalidOperationException("No seats available for this flight");
 
         AvailableSeats--;
@@ -132,7 +132,7 @@ public class Flight : BaseEntity
 
     private static void ValidateSeats(int seats)
     {
-        if (seats <= 0)
+        if (seats < 0)
             throw new ArgumentException("Available seats cannot be negative");
     }
 
