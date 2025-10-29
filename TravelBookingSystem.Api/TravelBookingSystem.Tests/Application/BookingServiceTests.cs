@@ -100,6 +100,35 @@ public class BookingServiceTests : IDisposable
         exception.Message.Should().Contain("Seat is already occupied");
     }
 
+    [Fact]
+    public async Task CreateBooking_WithNonExistentFlight_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+
+        SeedData();
+
+        // Arrange
+        var command = new CreateBookingCommand
+        {
+            FlightId = 999, // Non-existent flight
+            PassengerId = 1,
+            SeatNumber = "A1"
+        };
+
+        var handler = new CreateBookingCommandHandler(
+                _bookingRepository, _flightRepository,
+                _passengerRepository, eventStoreMock.Object);
+
+        SeedData();
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
+            () => handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Contain("Flight not found");
+    }
+
     private async void SeedData()
     {
         // Seed Flight
