@@ -181,6 +181,37 @@ public class FlightServiceTests : IDisposable
         exception.Message.Should().Contain("Flight not found");
     }
 
+    [Fact]
+    public async Task UpdateFlightSeats_WithNegativeSeats_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<UpdateFlightSeatsCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+        var cacheServiceMock = new Mock<ICacheService>();
+
+        // Arrange
+        var flight = new Flight("123456", "Yazd", "Mashhad",
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddHours(8),
+            150, 4_000_000, BitConverter.GetBytes(DateTime.Now.Ticks));
+
+        _context.Flights.Add(flight);
+        await _context.SaveChangesAsync();
+
+        var command = new UpdateFlightSeatsCommand
+        {
+            FlightId = flight.Id,
+            AvailableSeats = -10 // Negative seats
+        };
+
+        var handler = new UpdateFlightSeatsCommandHandler(_flightRepository, eventStoreMock.Object,
+                    cacheServiceMock.Object, loggerMock.Object);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            () => handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Contain("Available seats cannot be negative");
+    }
+
     public void Dispose()
     {
         _context.Dispose();
