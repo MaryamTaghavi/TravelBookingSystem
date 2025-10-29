@@ -36,7 +36,7 @@ public class BookingServiceTests : IDisposable
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
 
-        SeedData();
+        await SeedData();
 
         // Arrange
         var command = new CreateBookingCommand
@@ -60,13 +60,45 @@ public class BookingServiceTests : IDisposable
         result.PassengerName.Should().Be("MaryamTaghavi");
     }
 
+
+    [Fact]
+    public async Task CreateBooking_WithNoAvailableSeats_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+
+        await SeedData();
+
+        // Arrange
+        var flight = await _flightRepository.GetByIdAsync(1);
+        flight!.UpdateSeats(0);
+        await _flightRepository.UpdateAsync(flight);
+
+        var command = new CreateBookingCommand
+        {
+            FlightId = 1,
+            PassengerId = 1,
+            SeatNumber = "A1"
+        };
+
+        var handler = new CreateBookingCommandHandler(
+            _bookingRepository, _flightRepository,
+            _passengerRepository, eventStoreMock.Object);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Contain("No seats available");
+    }
+
     [Fact]
     public async Task CreateBooking_WithOccupiedSeat_ShouldThrowException()
     {
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
 
-        SeedData();
+        await SeedData();
 
         // Arrange
         // First booking
