@@ -25,10 +25,11 @@ This project follows **Clean Architecture** with clear separation of concerns ac
 - .NET 8 SDK
 - In-Memory DataBase
 - In-Memory Caching
+- Docker (optional, for containerized deployment)
 
 ## Setup Instructions
 
-### Local Development
+### Option1 : Local Development
 
 1. **Clone the repository**
    ```bash
@@ -51,6 +52,17 @@ This project follows **Clean Architecture** with clear separation of concerns ac
    - API: `https://localhost:7131` or `http://localhost:5031`
    - Swagger UI: `https://localhost:7131/swagger` or `http://localhost:5031/swagger`
 
+### Option 2: Docker Deployment
+
+1. **Build and run with Docker Compose**
+   ```bash
+   docker-compose up --build
+   ```
+
+2. **Access the application**
+   - API: `http://localhost:8080`
+   - Swagger UI: `http://localhost:8080`
+     
 ## API Endpoints
 
 ### Flights
