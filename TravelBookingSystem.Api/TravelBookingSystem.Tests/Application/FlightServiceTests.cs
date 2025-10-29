@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TravelBookingSystem.Application.Features.Flights.Commands.Create;
+using TravelBookingSystem.Application.Features.Flights.Commands.Update;
 using TravelBookingSystem.Domain.Entities;
 using TravelBookingSystem.Domain.Interfaces;
 using TravelBookingSystem.Infrastructure;
@@ -122,6 +123,38 @@ public class FlightServiceTests : IDisposable
             () => handler.Handle(command, CancellationToken.None));
 
         exception.Message.Should().Contain("Departure time must be before arrival time");
+    }
+
+    [Fact]
+    public async Task UpdateFlightSeats_WithValidData_ShouldSucceed()
+    {
+        var loggerMock = new Mock<ILogger<UpdateFlightSeatsCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+        var cacheServiceMock = new Mock<ICacheService>();
+
+        // Arrange
+        var flight = new Flight("123456", "Yazd", "Mashhad",
+            DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddHours(8),
+            150, 4_000_000 , BitConverter.GetBytes(DateTime.Now.Ticks));
+
+        _context.Flights.Add(flight);
+        await _context.SaveChangesAsync();
+
+        var command = new UpdateFlightSeatsCommand
+        {
+            FlightId = flight.Id,
+            AvailableSeats = 200
+        };
+
+        var handler = new UpdateFlightSeatsCommandHandler(_flightRepository, eventStoreMock.Object,
+                            cacheServiceMock.Object , loggerMock.Object);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.AvailableSeats.Should().Be(200);
     }
 
     public void Dispose()
