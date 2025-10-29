@@ -19,6 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\TravelBookingSystem.Application\TravelBookingSystem.Application.csproj" />
+    <ProjectReference Include="..\..\src\TravelBookingSystem.Infrastructure\TravelBookingSystem.Infrastructure.csproj" />
     <ProjectReference Include="..\TravelBookingSystem.Application\TravelBookingSystem.Application.csproj" />
     <ProjectReference Include="..\TravelBookingSystem.Infrastructure\TravelBookingSystem.Infrastructure.csproj" />
   </ItemGroup>
