@@ -106,7 +106,7 @@ public class BookingServiceTests : IDisposable
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
 
-        SeedData();
+        await SeedData();
 
         // Arrange
         var command = new CreateBookingCommand
@@ -120,8 +120,6 @@ public class BookingServiceTests : IDisposable
                 _bookingRepository, _flightRepository,
                 _passengerRepository, eventStoreMock.Object);
 
-        SeedData();
-
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
             () => handler.Handle(command, CancellationToken.None));
@@ -129,7 +127,34 @@ public class BookingServiceTests : IDisposable
         exception.Message.Should().Contain("Flight not found");
     }
 
-    private async void SeedData()
+    [Fact]
+    public async Task CreateBooking_WithNonExistentPassenger_ShouldThrowException()
+    {
+        var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
+        var eventStoreMock = new Mock<IEventStore>();
+
+        await SeedData();
+
+        // Arrange
+        var command = new CreateBookingCommand
+        {
+            FlightId = 1,
+            PassengerId = 999, // Non-existent passenger
+            SeatNumber = "A1"
+        };
+
+        var handler = new CreateBookingCommandHandler(
+                _bookingRepository, _flightRepository,
+                _passengerRepository, eventStoreMock.Object);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
+            () => handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Contain("Passenger not found");
+    }
+
+    private async Task SeedData()
     {
         // Seed Flight
         var flight = new Flight("123456", "Yazd", "Mashhad",
