@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TravelBookingSystem.Application.DTOs;
-using TravelBookingSystem.Application.Features.Bookings.Create;
+using TravelBookingSystem.Application.Features.Bookings.Commands.Create;
 using TravelBookingSystem.Application.Features.Flights.Queries.GetByFlightId;
 
 namespace TravelBookingSystem.Api.Controllers;

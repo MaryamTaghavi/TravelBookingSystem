@@ -59,9 +59,9 @@ public class FlightRepository : IFlightRepository
                  CancellationToken cancellationToken)
     {
         var query = _context.Flights
-            .WhereIf(!string.IsNullOrEmpty(origin), f => f.Origin.Contains(origin))
-            .WhereIf(!string.IsNullOrEmpty(destination), f => f.Destination.Contains(destination))
-            .WhereIf(date.HasValue, f => f.DepartureTime >= date.Value.Date && f.DepartureTime < date.Value.Date.AddDays(1));
+            .WhereIf(!string.IsNullOrEmpty(origin), f => f.Origin.Contains(origin!))
+            .WhereIf(!string.IsNullOrEmpty(destination), f => f.Destination.Contains(destination!))
+            .WhereIf(date.HasValue, f => f.DepartureTime >= date!.Value.Date && f.DepartureTime < date.Value.Date.AddDays(1));
 
         return await query
             .Include(f => f.Bookings)

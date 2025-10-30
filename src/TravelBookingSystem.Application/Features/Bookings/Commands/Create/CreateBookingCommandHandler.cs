@@ -3,8 +3,9 @@ using TravelBookingSystem.Application.DTOs;
 using TravelBookingSystem.Application.Mappings;
 using TravelBookingSystem.Domain.Events;
 using TravelBookingSystem.Domain.Interfaces;
+using TravelBookingSystem.Application.Features.Bookings.Commands.Create;
 
-namespace TravelBookingSystem.Application.Features.Bookings.Create;
+namespace TravelBookingSystem.Application.Features.Bookings.Commands.Commands.Create;
 
 public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand, BookingResponseDto>
 {
@@ -19,8 +20,8 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         IBookingRepository bookingRepository,
         IFlightRepository flightRepository,
         IPassengerRepository passengerRepository,
-        IEventStore eventStore ,
-        IUnitOfWork unitOfWork ,
+        IEventStore eventStore,
+        IUnitOfWork unitOfWork,
         ICacheService cacheService)
     {
         _bookingRepository = bookingRepository;
@@ -34,7 +35,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     public async Task<BookingResponseDto> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         // Validate flight exists
-        var flight = await _flightRepository.GetByIdAsync(request.FlightId , cancellationToken);
+        var flight = await _flightRepository.GetByIdAsync(request.FlightId, cancellationToken);
         if (flight == null)
         {
             throw new KeyNotFoundException("Flight not found");
@@ -54,7 +55,7 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         }
 
         // Check if seat is already taken
-        var isSeatAvailable = await _bookingRepository.IsSeatAvailableAsync(request.FlightId, request.SeatNumber , cancellationToken);
+        var isSeatAvailable = await _bookingRepository.IsSeatAvailableAsync(request.FlightId, request.SeatNumber, cancellationToken);
         if (!isSeatAvailable)
         {
             throw new InvalidOperationException("Seat is already occupied");

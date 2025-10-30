@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using TravelBookingSystem.Application.Features.Bookings.Create;
+using TravelBookingSystem.Application.Features.Bookings.Commands.Create;
 using TravelBookingSystem.Domain.Entities;
 using TravelBookingSystem.Domain.Interfaces;
 using TravelBookingSystem.Infrastructure;

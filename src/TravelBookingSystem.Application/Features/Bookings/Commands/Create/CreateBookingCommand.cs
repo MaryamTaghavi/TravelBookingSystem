@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using TravelBookingSystem.Application.DTOs;
 
-namespace TravelBookingSystem.Application.Features.Bookings.Create;
+namespace TravelBookingSystem.Application.Features.Bookings.Commands.Create;
 
 public class CreateBookingCommand : IRequest<BookingResponseDto>
 {

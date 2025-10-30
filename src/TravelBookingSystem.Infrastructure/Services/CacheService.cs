@@ -21,9 +21,9 @@ public class CacheService : ICacheService
     {
         try
         {
-            if (_cache.TryGetValue(key, out string json))
+            if (_cache.TryGetValue(key, out string? json))
             {
-                var value = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+                var value = JsonSerializer.Deserialize<T>(json!, new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });

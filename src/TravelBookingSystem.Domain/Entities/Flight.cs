@@ -24,7 +24,7 @@ public class Flight : BaseEntity
     /// Control Concurrency
     /// </summary>
     [Timestamp]
-    public byte[] RowVersion { get; private set; }
+    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
 
     #region Navigation Property
 
