@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using TravelBookingSystem.Domain.Entities;
 using TravelBookingSystem.Domain.Interfaces;
@@ -12,11 +14,11 @@ public class FlightRepository : IFlightRepository
 
     public FlightRepository(AppDbContext context) => _context = context;
 
-    public async Task<Flight?> GetByIdAsync(int id , CancellationToken cancellationToken)
+    public async Task<Flight?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await _context.Flights
             .Include(f => f.Bookings)
-            .FirstOrDefaultAsync(f => f.Id == id ,cancellationToken);
+            .FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
     }
 
     public async Task<IEnumerable<Flight>> GetAllAsync(CancellationToken cancellationToken)
@@ -26,9 +28,9 @@ public class FlightRepository : IFlightRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Flight> AddAsync(Flight entity , CancellationToken cancellationToken)
+    public async Task<Flight> AddAsync(Flight entity, CancellationToken cancellationToken)
     {
-         await _context.Flights.AddAsync(entity , cancellationToken);
+        await _context.Flights.AddAsync(entity, cancellationToken);
         return entity;
     }
 
@@ -39,7 +41,7 @@ public class FlightRepository : IFlightRepository
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var flight = await _context.Flights.FindAsync(id , cancellationToken);
+        var flight = await _context.Flights.FindAsync(id, cancellationToken);
         if (flight != null)
         {
             _context.Flights.Remove(flight);
@@ -53,30 +55,16 @@ public class FlightRepository : IFlightRepository
 
     public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Flights.AnyAsync(f => f.Id == id , cancellationToken);
+        return await _context.Flights.AnyAsync(f => f.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Flight>> GetFlightsByFiltersAsync(string? origin, string? destination, DateTime? date ,
+    public async Task<IEnumerable<Flight>> GetFlightsByFiltersAsync(string? origin, string? destination, DateTime? date,
                  CancellationToken cancellationToken)
     {
-        var query = _context.Flights.AsQueryable();
-
-        if (!string.IsNullOrEmpty(origin))
-        {
-            query = query.Where(f => f.Origin.Contains(origin));
-        }
-
-        if (!string.IsNullOrEmpty(destination))
-        {
-            query = query.Where(f => f.Destination.Contains(destination));
-        }
-
-        if (date.HasValue)
-        {
-            var startOfDay = date.Value.Date;
-            var endOfDay = startOfDay.AddDays(1);
-            query = query.Where(f => f.DepartureTime >= startOfDay && f.DepartureTime < endOfDay);
-        }
+        var query = _context.Flights
+            .WhereIf(!string.IsNullOrEmpty(origin), f => f.Origin.Contains(origin))
+            .WhereIf(!string.IsNullOrEmpty(destination), f => f.Destination.Contains(destination))
+            .WhereIf(date.HasValue, f => f.DepartureTime >= date.Value.Date && f.DepartureTime < date.Value.Date.AddDays(1));
 
         return await query
             .Include(f => f.Bookings)
@@ -84,9 +72,9 @@ public class FlightRepository : IFlightRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Flight?> GetByFlightNumberAsync(string flightNumber , CancellationToken cancellationToken)
+    public async Task<Flight?> GetByFlightNumberAsync(string flightNumber, CancellationToken cancellationToken)
     {
         return await _context.Flights
-            .FirstOrDefaultAsync(f => f.FlightNumber == flightNumber , cancellationToken);
+            .FirstOrDefaultAsync(f => f.FlightNumber == flightNumber, cancellationToken);
     }
 }
