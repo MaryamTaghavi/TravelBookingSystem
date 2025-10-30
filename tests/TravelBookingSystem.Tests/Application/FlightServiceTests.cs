@@ -16,6 +16,7 @@ public class FlightServiceTests : IDisposable
 {
     private readonly AppDbContext _context;
     private readonly IFlightRepository _flightRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public FlightServiceTests()
     {
@@ -25,6 +26,7 @@ public class FlightServiceTests : IDisposable
 
         _context = new AppDbContext(options);
         _flightRepository = new FlightRepository(_context);
+        _unitOfWork = new EfUnitOfWork(_context);
     }
 
     [Fact]
@@ -74,6 +76,7 @@ public class FlightServiceTests : IDisposable
             120, 4_000_000 , BitConverter.GetBytes(DateTime.Now.Ticks));
 
         await _flightRepository.AddAsync(existingFlight);
+        await _unitOfWork.SaveChangesAsync();
 
         var command = new CreateFlightCommand
         {
@@ -138,7 +141,7 @@ public class FlightServiceTests : IDisposable
             150, 4_000_000 , BitConverter.GetBytes(DateTime.Now.Ticks));
 
         _context.Flights.Add(flight);
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         var command = new UpdateFlightSeatsCommand
         {
@@ -147,7 +150,7 @@ public class FlightServiceTests : IDisposable
         };
 
         var handler = new UpdateFlightSeatsCommandHandler(_flightRepository, eventStoreMock.Object,
-                            cacheServiceMock.Object , loggerMock.Object);
+                            cacheServiceMock.Object , loggerMock.Object , _unitOfWork);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -172,7 +175,7 @@ public class FlightServiceTests : IDisposable
         };
 
         var handler = new UpdateFlightSeatsCommandHandler(_flightRepository, eventStoreMock.Object,
-                            cacheServiceMock.Object, loggerMock.Object);
+                            cacheServiceMock.Object, loggerMock.Object , _unitOfWork);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
@@ -203,7 +206,7 @@ public class FlightServiceTests : IDisposable
         };
 
         var handler = new UpdateFlightSeatsCommandHandler(_flightRepository, eventStoreMock.Object,
-                    cacheServiceMock.Object, loggerMock.Object);
+                    cacheServiceMock.Object, loggerMock.Object, _unitOfWork);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(

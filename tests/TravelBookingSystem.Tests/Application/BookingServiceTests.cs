@@ -37,6 +37,7 @@ public class BookingServiceTests : IDisposable
     {
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
+        var cacheService = new Mock<ICacheService>();
 
         await SeedData();
 
@@ -45,29 +46,29 @@ public class BookingServiceTests : IDisposable
         {
             FlightId = 1,
             PassengerId = 1,
-            SeatNumber = "A1"
+            SeatNumber = "A10"
         };
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository, eventStoreMock.Object , _unitOfWork);
+            _passengerRepository, eventStoreMock.Object, _unitOfWork, cacheService.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
-        result.SeatNumber.Should().Be("A1");
+        result.SeatNumber.Should().Be("A10");
         result.FlightNumber.Should().Be("123456");
         result.PassengerName.Should().Be("MaryamTaghavi");
     }
-
 
     [Fact]
     public async Task CreateBooking_WithNoAvailableSeats_ShouldThrowException()
     {
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
+        var cacheService = new Mock<ICacheService>();
 
         await SeedData();
 
@@ -86,7 +87,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository, eventStoreMock.Object , _unitOfWork);
+            _passengerRepository, eventStoreMock.Object, _unitOfWork, cacheService.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
@@ -100,6 +101,7 @@ public class BookingServiceTests : IDisposable
     {
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
+        var cacheService = new Mock<ICacheService>();
 
         await SeedData();
 
@@ -114,7 +116,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
             _bookingRepository, _flightRepository,
-            _passengerRepository, eventStoreMock.Object, _unitOfWork);
+            _passengerRepository, eventStoreMock.Object, _unitOfWork, cacheService.Object);
 
         await handler.Handle(firstCommand, CancellationToken.None);
 
@@ -140,6 +142,7 @@ public class BookingServiceTests : IDisposable
     {
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
+        var cacheService = new Mock<ICacheService>();
 
         await SeedData();
 
@@ -153,7 +156,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
                 _bookingRepository, _flightRepository,
-                _passengerRepository, eventStoreMock.Object, _unitOfWork);
+                _passengerRepository, eventStoreMock.Object, _unitOfWork, cacheService.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
@@ -167,6 +170,7 @@ public class BookingServiceTests : IDisposable
     {
         var loggerMock = new Mock<ILogger<CreateBookingCommandHandler>>();
         var eventStoreMock = new Mock<IEventStore>();
+        var cacheService = new Mock<ICacheService>();
 
         await SeedData();
 
@@ -180,7 +184,7 @@ public class BookingServiceTests : IDisposable
 
         var handler = new CreateBookingCommandHandler(
                 _bookingRepository, _flightRepository,
-                _passengerRepository, eventStoreMock.Object, _unitOfWork);
+                _passengerRepository, eventStoreMock.Object, _unitOfWork, cacheService.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
