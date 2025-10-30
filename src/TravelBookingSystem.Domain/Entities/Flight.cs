@@ -4,48 +4,24 @@ namespace TravelBookingSystem.Domain.Entities;
 
 public class Flight : BaseEntity
 {
-    /// <summary>
-    /// شماره پرواز
-    /// </summary>
     public string FlightNumber { get; private set; }
 
-    /// <summary>
-    /// مبدا
-    /// </summary>
     public string Origin { get; private set; }
 
-    /// <summary>
-    /// مقصد
-    /// </summary>
     public string Destination { get; private set; }
 
-    /// <summary>
-    /// زمان حرکت
-    /// </summary>
     public DateTime DepartureTime { get; private set; }
 
-    /// <summary>
-    /// زمان رسیدن
-    /// </summary>
     public DateTime ArrivalTime { get; private set; }
 
-    /// <summary>
-    /// تعداد صندلی های خالی
-    /// </summary>
     public int AvailableSeats { get; private set; }
 
-    /// <summary>
-    /// قیمت بلیط
-    /// </summary>
     public decimal Price { get; private set; }
 
-    /// <summary>
-    /// زمان ایجاد
-    /// </summary>
     public DateTime CreateDate { get; private set; }
 
     /// <summary>
-    /// برای کنترل همزمانی
+    /// Control Concurrency
     /// </summary>
     [Timestamp]
     public byte[] RowVersion { get; private set; }

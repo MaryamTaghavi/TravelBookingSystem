@@ -2,29 +2,14 @@
 
 public class Passenger : BaseEntity
 {
-    /// <summary>
-    /// نام کامل
-    /// </summary>
     public string FullName { get; private set; }
 
-    /// <summary>
-    /// ایمیل
-    /// </summary>
     public string Email { get; private set; }
 
-    /// <summary>
-    /// شماره پاسپورت
-    /// </summary>
     public string PassportNumber { get; private set; }
 
-    /// <summary>
-    /// شماره تماس
-    /// </summary>
     public string? PhoneNumber { get; private set; }
 
-    /// <summary>
-    /// زمان ایجاد
-    /// </summary>
     public DateTime CreateDate { get; private set; }
 
     #region Navigation Property
@@ -101,8 +86,8 @@ public class Passenger : BaseEntity
     {
         try
         {
-            var addr = new System.Net.Mail.MailAddress(email);
-            return addr.Address == email;
+            var address = new System.Net.Mail.MailAddress(email);
+            return address.Address == email;
         }
         catch
         {

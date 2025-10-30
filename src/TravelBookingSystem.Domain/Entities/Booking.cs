@@ -1,25 +1,15 @@
-﻿namespace TravelBookingSystem.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TravelBookingSystem.Domain.Entities;
 
 public class Booking : BaseEntity
 {
-    /// <summary>
-    /// شناسه پرواز
-    /// </summary>
     public int FlightId { get; private set; }
 
-    /// <summary>
-    /// شناسه مسافر
-    /// </summary>
     public int PassengerId { get; private set; }
 
-    /// <summary>
-    /// شماره صندلی
-    /// </summary>
     public string SeatNumber { get; private set; }
 
-    /// <summary>
-    /// زمان درج رزرو
-    /// </summary>
     public DateTime BookingDate { get; private set; }
 
     private Booking()
@@ -39,7 +29,10 @@ public class Booking : BaseEntity
 
     #region Navigation Property
 
+    [ForeignKey(nameof(PassengerId))]
     public virtual Passenger Passenger { get; private set; } = null!;
+
+    [ForeignKey(nameof(FlightId))]
     public virtual Flight Flight { get; private set; } = null!;
 
     #endregion
