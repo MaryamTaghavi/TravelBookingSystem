@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
 using TravelBookingSystem.Domain.Entities;
 using TravelBookingSystem.Domain.Interfaces;
 

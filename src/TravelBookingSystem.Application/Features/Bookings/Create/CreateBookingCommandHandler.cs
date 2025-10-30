@@ -13,19 +13,22 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     private readonly IPassengerRepository _passengerRepository;
     private readonly IEventStore _eventStore;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICacheService _cacheService;
 
     public CreateBookingCommandHandler(
         IBookingRepository bookingRepository,
         IFlightRepository flightRepository,
         IPassengerRepository passengerRepository,
         IEventStore eventStore ,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork ,
+        ICacheService cacheService)
     {
         _bookingRepository = bookingRepository;
         _flightRepository = flightRepository;
         _passengerRepository = passengerRepository;
         _eventStore = eventStore;
         _unitOfWork = unitOfWork;
+        _cacheService = cacheService;
     }
 
     public async Task<BookingResponseDto> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
@@ -69,6 +72,10 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             // Update available seats
             flight.ReduceAvailableSeats();
             _flightRepository.Update(flight);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Remove Caching
+            await _cacheService.RemoveByPatternAsync("flights:");
 
             // Store event
             var bookingCreatedEvent = new BookingCreatedEvent(
@@ -78,7 +85,6 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
                 createdBooking.SeatNumber
             );
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _eventStore.SaveEventAsync(
                 createdBooking.Id.ToString(),
